@@ -20,5 +20,16 @@ class Player:
         return randint(0, turn)
 
     def give_card(self, cards_on_table, koz):
-        pass
-
+        if not cards_on_table:
+            card = choice(self._cards)
+            self._cards.remove(card)
+            return card
+        first = cards_on_table.items()[0][0]
+        possible = [card for card in self._cards if card._suite == first._suite]
+        if possible:
+            card = choice(possible)
+            self._cards.remove(card)
+            return card
+        card = choice(self._cards)
+        self._cards.remove(card)
+        return card

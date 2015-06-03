@@ -27,6 +27,14 @@ class Game:
         for player in row:
             self._predictions[player] = player.make_prediction(turn, koz)
 
+    def clean_hands(self):
+        for player in self._players:
+            player._hands = 0
+
+    def clean_predictions(self):
+        for k, v in self._predictions.items():
+            self._predictions[k] = None
+
     def greatest_on_table(self, cards_on_table, koz):
         return sorted([card for card in cards_on_table if card._suite == koz],
                        key=lambda card: card._value,
@@ -50,17 +58,36 @@ class Game:
         winner._hands += 1
         self._last_hand = winner
 
-    def round(self, number):
+    def proceed_round(self, turn, row, koz):
+        for single in range(turn):
+            self._single_deal(row, koz)
+            row = self.create_row(self._last_hand)
+            row = row[-1:] + row[:-1]
+
+    def calculate_points(self):
+        for player in self._players:
+            if player._hands == self._predictions[player]:
+                self._score[player] += player._hands ** 2 + 10
+
+    def close_round(self):
+        self.clean_hands()
+        self.clean_predictions()
+        self._last_hand = None
+
+    def single_round(self, number):
         dealer = next(self._dealers)
-        # print('Logger: ', 'dealer - ', dealer)
+        self.clean_hands()
         deck = Deck()
-        # print(deck._deck)
         self.deal_cards(dealer, number, deck)
         koz = deck.draw_top()._suite
-        # print('Logger: ', 'koz - ', koz)
-        # print('Logger: Deck after dealing - ', deck._deck)
-        self.make_predictions(dealer, turn)
+        self.make_predictions(dealer, number, koz)
         row = self.create_row(dealer)
-        for single in range(number):
-            self._single_deal(row, koz)
+        self.proceed_round(number, row, koz)
+        self.calculate_points()
+        self.close_round()
+
+    def start(self):
+        for turn in range(1, 13):
+            single_round(turn)
+
 
