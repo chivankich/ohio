@@ -9,6 +9,7 @@ class Game:
         self._players = players
         self._score = {player: 0 for player in self._players}
         self._predictions = {player: None for player in self._players}
+        self._stat = Statistics(self._players)
         self._dealers = cycle(self._players)
         self._last_hand = None
 
@@ -114,6 +115,5 @@ class Game:
         self.close_round()
 
     def start(self):
-        statistics = Statistics()
         for turn in range(1, 17):
             self.single_round(turn)

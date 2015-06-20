@@ -44,8 +44,8 @@ class RealPlayer(Player):
     def make_prediction(self, turn, koz, predictions, row):
         if turn > 4 and self == row[-1]:
             return self.prediction_with_limit(turn, koz, predictions, row)
-        else:
-            return self.prediction_without_limit(turn, koz, predictions, row)
+
+        return self.prediction_without_limit(turn, koz, predictions, row)
 
     def situation(self, cards_on_table, koz):
         print("Cards on the table: ")
