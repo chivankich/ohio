@@ -34,19 +34,19 @@ class AIPlayer(Player):
         for suite in SUITES:
             quite_high_cards = self.higher_cards_than(suite, 10)
             for card in quite_high_cards:
-                if self.is_covered(card):
+                if card._value != 15 and self.is_covered(card):
                     hands += 1
         return hands
 
-    def points_from_low_kozes(self, turn, koz):
-        if not koz:
+    def points_from_low_trumps(self, turn, trump):
+        if not trump:
             return 0
-        low_kozes = len(self.lower_cards_than(koz, 9))
-        if turn / 2 < low_kozes:
+        low_trumps = len(self.lower_cards_than(trump, 9))
+        if turn / 2 < low_trumps:
             feel_unlucky = randint(0, 1)
-            return low_kozes - feel_unlucky
-        if low_kozes:
-            return randint(0, low_kozes)
+            return low_trumps - feel_unlucky
+        if low_trumps:
+            return randint(0, low_trumps)
         return 0
 
     def has_conflict(self, turn, predictions):
@@ -62,10 +62,10 @@ class AIPlayer(Player):
         self._prediction = hands
         return hands
 
-    def make_prediction(self, turn, koz, predictions, row):
+    def make_prediction(self, turn, trump, predictions, row):
         predicted_hands = sum([self.points_from_aces(),
                                self.points_from_covered_cards(),
-                               self.points_from_low_kozes(turn, koz)])
+                               self.points_from_low_trumps(turn, trump)])
         if row[-1] == self and self.has_conflict(turn, predictions):
             return self.resolved_conflict(predicted_hands)
         self._prediction = predicted_hands
@@ -78,20 +78,20 @@ class AIPlayer(Player):
         self._cards.remove(card)
         return card
 
-    def choose_from_others(self, card, koz):
+    def choose_from_others(self, card, trump):
         cards = sorted(self._cards,
                        key=lambda card: card._value,
                        reverse=True)
-        not_kozes = [card for card in cards if card._suite != koz]
-        if not_kozes:
-            card = not_kozes[0]
+        not_trumps = [card for card in cards if card._suite != trump]
+        if not_trumps:
+            card = not_trumps[0]
             self._cards.remove(card)
             return card
         card = cards[-1]
         self._cards.remove(card)
         return card
 
-    def choose_highest_under(self, card, koz):
+    def choose_highest_under(self, card, trump):
         lower_cards = self.lower_cards_than(card._suite, card._value - 1)
         higher_cards = self.higher_cards_than(card._suite, card._value + 1)
         if lower_cards:
@@ -102,28 +102,28 @@ class AIPlayer(Player):
             card = higher_cards[-1]
             self._cards.remove(card)
             return card
-        return self.choose_from_others(card, koz)
+        return self.choose_from_others(card, trump)
 
-    def no_more_hands(self, cards_on_table, koz):
+    def no_more_hands(self, cards_on_table, trump):
         given_cards = list(cards_on_table.keys())
         if not given_cards:
             return self.choose_the_best(False)
-        return self.choose_highest_under(given_cards[0], koz)
+        return self.choose_highest_under(given_cards[0], trump)
 
-    def try_to_get_with_others(self, card, koz):
+    def try_to_get_with_others(self, card, trump):
         cards = sorted(self._cards,
                        key=lambda card: card._value,
                        reverse=True)
-        kozes = [card for card in cards if card._suite == koz]
-        if kozes:
-            card = choice(kozes)
+        trumps = [card for card in cards if card._suite == trump]
+        if trumps:
+            card = choice(trumps)
             self._cards.remove(card)
             return card
         card = cards[-1]
         self._cards.remove(card)
         return card
 
-    def try_to_get(self, card, koz):
+    def try_to_get(self, card, trump):
         lower_cards = self.lower_cards_than(card._suite, card._value - 1)
         higher_cards = self.higher_cards_than(card._suite, card._value + 1)
         if higher_cards:
@@ -134,15 +134,15 @@ class AIPlayer(Player):
             card = lower_cards[-1]
             self._cards.remove(card)
             return card
-        return self.try_to_get_with_others(card, koz)
+        return self.try_to_get_with_others(card, trump)
 
-    def need_more_hands(self, cards_on_table, koz):
+    def need_more_hands(self, cards_on_table, trump):
         given_cards = list(cards_on_table.keys())
         if not given_cards:
             return self.choose_the_best(True)
-        return self.try_to_get(given_cards[0], koz)
+        return self.try_to_get(given_cards[0], trump)
 
-    def give_card(self, cards_on_table, koz):
+    def give_card(self, cards_on_table, trump):
         if self._hands == self._prediction:
-            return self.no_more_hands(cards_on_table, koz)
-        return self.need_more_hands(cards_on_table, koz)
+            return self.no_more_hands(cards_on_table, trump)
+        return self.need_more_hands(cards_on_table, trump)
