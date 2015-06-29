@@ -63,11 +63,11 @@ class Game:
 
         return cards_on_table[win_card]
 
-    def single_deal(self, row, trump):
+    def single_deal(self, row, trump, turn):
         cards_on_table = OrderedDict()
 
         for player in row:
-            card = player.give_card(cards_on_table, trump)
+            card = player.give_card(cards_on_table, trump, turn, row)
             cards_on_table[card] = player
 
         winner = self.define_winner(cards_on_table, trump)
@@ -79,7 +79,7 @@ class Game:
             turn = 13
 
         for single in range(turn):
-            self.single_deal(row, trump)
+            self.single_deal(row, trump, turn)
             row = self.create_row(self._last_hand)
             row = row[-1:] + row[:-1]
 

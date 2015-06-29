@@ -1,30 +1,68 @@
+import os
 from player import Player
 
 
 class RealPlayer(Player):
-    def overview(self, turn, trump, predictions, row):
-        in_row = row.index(self)
+    def _init__(self, name):
+        super(AIPlayer, self).__init__(name)
+        self._prediction = None
 
-        for player in row[:in_row]:
-            print(player, " said ", predictions[player], " hands")
-        print("trump: ", trump)
-        print("Your cards: ")
-        for card in self._cards:
-            print(card)
+    def is_number(self, string):
+        try:
+            int(string)
+            return True
+        except ValueError:
+            return False
+
+    def overview(self, turn, trump, predictions, row):
+        os.system('cls')
+        print('Round: ', str(turn))
+        print()
+        print('Predictions:'.center(85))
+        print('-' * 85)
+        print('|', end='')
+        for player in row:
+            print(player._name.center(20) + '|', end='')
+        print()
+        print('-' * 85)
+        print('|', end='')
+        for player in row:
+            if predictions[player] != None:
+                print((str(predictions[player]) + ' hands').center(20) + '|', end='')
+            else:
+                print('thinking...'.center(20) + '|', end='')
+        print()
+        print('-' * 85)
+        print()
+        print('Your cards:'.center(12), 'Trump:'.center(12), sep=' ' * 10)
+        print('-' * 12 + ' ' * 10 + '-' * 12)
+        print(str(self._cards[0]).center(12) + '|', '|' + trump.center(12) + '|', sep=' ' * 8)
+        print('-' * 12, '-' * 12, sep=' ' * 10)
+        for card in self._cards[1:]:
+            print(str(card).center(12) + '|')
+            print('-' * 12)
+        print()
 
     def prediction_without_limit(self, turn, trump, predictions, row):
         self.overview(turn, trump, predictions, row)
 
-        hands = input("How many hands you think you will make? ")
+        print("How many hands you think you will make?")
+        hands = input('==> ')
+        while not self.is_number(hands):
+            self.overview(turn, trump, predictions, row)
+            print('Please, enter a number!')
+            hands = input('==> ')
+        self._prediction = int(hands)
         return int(hands)
 
-    def verify_prediction(self, hands, limit):
-        while hands == limit:
-            hands = input("You are last, select number, different from ",
-                          limit, ": ")
-            return self.verify_prediction(hands, limit)
+    def verify_prediction(self, hands, limit, turn, trump, predictions, row):
+        while hands == limit or not self.is_number(hands):
+            self.overview(turn, trump, predictions, row)
+            print("You are the last, select number, different from ", limit, ": ")
+            hands = input('==> ')
 
-        return hands
+        self._prediction = int(hands)
+        return int(hands)
 
     def prediction_with_limit(self, turn, trump, predictions, row):
         all_hands = sum(predictions.values())
@@ -38,8 +76,12 @@ class RealPlayer(Player):
             return self.prediction_without_limit(turn, trump, predictions, row)
 
         self.overview(turn, trump, predictions, row)
-        hands = input("How many hands you think you will make? ")
-        return self.verify_prediction(hands, limit)
+        hands = input('==> ')
+        while not self.is_number(hands):
+            self.overview(turn, trump, predictions, row)
+            print('Please, enter a number!')
+            hands = input('==> ')
+        return self.verify_prediction(int(hands), limit, turn, trump, predictions, row)
 
     def make_prediction(self, turn, trump, predictions, row):
         if turn > 4 and self == row[-1]:
@@ -47,10 +89,20 @@ class RealPlayer(Player):
 
         return self.prediction_without_limit(turn, trump, predictions, row)
 
-    def situation(self, cards_on_table, trump):
-        print("Cards on the table: ")
+    def situation(self, cards_on_table, trump, turn, row):
+        os.system('cls')
+        print('Round: ', str(turn))
+        print()
+        print('Cards on the table:'.center(85))
+        print('-' * 85)
+        print('|', end='')
+        for player in row:
+            print((player._name + ' (' + str(player._hands) + '/' + str(player._prediction) +')').center(20) + '|', end='')
+        print()
+        print('-' * 85)
+        print('|', end='')
         for card in list(cards_on_table.keys()):
-            print(card, " from ", cards_on_table[card]._name)
+            print(card)
         print("Your cards: ")
         for card in self._cards:
             print(card)
@@ -115,8 +167,8 @@ class RealPlayer(Player):
 
         return self.the_card(rank, suite)
 
-    def give_card(self, cards_on_table, trump):
-        self.situation(cards_on_table, trump)
+    def give_card(self, cards_on_table, trump, turn, row):
+        self.situation(cards_on_table, trump, turn, row)
 
         selected_card = input("Please, select a card to give: ")
         card = self.verify_choice(selected_card, cards_on_table, trump)

@@ -3,7 +3,7 @@ from AIPlayer import AIPlayer
 from game import Game
 
 
-ivan = AIPlayer('Ivan')
+ivan = RealPlayer('Ivan')
 marto = AIPlayer('Marto')
 sando = AIPlayer('Sando')
 kiss = AIPlayer('Kiss')
