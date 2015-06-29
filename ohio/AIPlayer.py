@@ -62,7 +62,7 @@ class AIPlayer(Player):
         self._prediction = hands
         return hands
 
-    def make_prediction(self, turn, trump, predictions, row):
+    def make_prediction(self, turn, trump, predictions, row, score):
         predicted_hands = sum([self.points_from_aces(),
                                self.points_from_covered_cards(),
                                self.points_from_low_trumps(turn, trump)])
@@ -142,7 +142,7 @@ class AIPlayer(Player):
             return self.choose_the_best(True)
         return self.try_to_get(given_cards[0], trump)
 
-    def give_card(self, cards_on_table, trump, turn, row):
+    def give_card(self, cards_on_table, trump, turn, row, score):
         if self._hands == self._prediction:
             return self.no_more_hands(cards_on_table, trump)
         return self.need_more_hands(cards_on_table, trump)

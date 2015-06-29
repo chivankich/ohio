@@ -37,7 +37,7 @@ class Game:
         for player in row:
             predictions = self._predictions
             self._predictions[player] = \
-                player.make_prediction(turn, trump, predictions, row)
+                player.make_prediction(turn, trump, predictions, row, self._score)
 
     def clean_hands(self):
         for player in self._players:
@@ -67,7 +67,7 @@ class Game:
         cards_on_table = OrderedDict()
 
         for player in row:
-            card = player.give_card(cards_on_table, trump, turn, row)
+            card = player.give_card(cards_on_table, trump, turn, row, self._score)
             cards_on_table[card] = player
 
         winner = self.define_winner(cards_on_table, trump)
