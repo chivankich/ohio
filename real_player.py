@@ -3,8 +3,8 @@ from ui import CLI
 
 
 class RealPlayer(Player):
-    def _init__(self, name):
-        super(AIPlayer, self).__init__(name)
+    def __init__(self, name):
+        super(RealPlayer, self).__init__(name)
         self._prediction = None
 
     def prediction_without_limit(self, turn, trump, predictions, row, score):
@@ -31,7 +31,8 @@ class RealPlayer(Player):
         return int(hands)
 
     def prediction_with_limit(self, turn, trump, predictions, row, score):
-        all_hands = sum(predictions.values())
+        all_hands = sum([value for value in predictions.values()
+                         if value != None])
 
         if all_hands > turn:
             limit = -1
@@ -116,7 +117,8 @@ class RealPlayer(Player):
                                       turn, row, score)
 
         while not self.is_card_from_hand(rank, suite):
-            CLI.situation(cards_on_table, trump, turn, row, self._cards)
+            CLI.situation(cards_on_table, trump, turn, row, score,
+                          self._cards)
             print('Please, select a card from your hand, ' + \
                   self._name + ': ')
             selected_card = input('==> ')
@@ -124,7 +126,8 @@ class RealPlayer(Player):
                                       turn, row, score)
 
         while not self.is_right_suite(suite, cards_on_table):
-            CLI.situation(cards_on_table, trump, turn, row, self._cards)
+            CLI.situation(cards_on_table, trump, turn, row, score,
+                          self._cards)
             print('Please, select a card with proper suite, ' + \
                   self._name + ': ')
             selected_card = input('==> ')

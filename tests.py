@@ -3,7 +3,7 @@ from random import randint
 from collections import OrderedDict
 from deck import Card, Deck
 from player import Player
-from AIPlayer import AIPlayer
+from ai_player import AIPlayer
 from game import Game
 
 
@@ -155,7 +155,7 @@ class TestGameRules(unittest.TestCase):
         trump = 'Spades'
         row = self.game.create_row(dealer)
         self.game.make_predictions(dealer, turn, trump)
-        self.game.single_deal(row, trump)
+        self.game.single_deal(row, trump, turn)
         self.assertEqual(self.game._last_hand, self.player4)
 
     def test_calculate_points_successful_prediction(self):
@@ -325,7 +325,8 @@ class TestAIPlayer(unittest.TestCase):
         cards_on_table[self.six_hearts] = self.player4
         self.player._prediction = 4
         self.player._hands = 3
-        self.assertEqual(self.player.give_card(cards_on_table, trump),
+        self.assertEqual(self.player.give_card(cards_on_table, trump, 4, None,
+                                               None),
                          self.ace_spades)
 
 

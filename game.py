@@ -1,6 +1,7 @@
 from itertools import cycle, chain
 from collections import OrderedDict
 from deck import Card, Deck
+from ui import CLI
 
 
 class Game:
@@ -37,7 +38,8 @@ class Game:
         for player in row:
             predictions = self._predictions
             self._predictions[player] = \
-                player.make_prediction(turn, trump, predictions, row, self._score)
+                player.make_prediction(turn, trump, predictions, row,
+                                       self._score)
 
     def clean_hands(self):
         for player in self._players:
@@ -67,10 +69,13 @@ class Game:
         cards_on_table = OrderedDict()
 
         for player in row:
-            card = player.give_card(cards_on_table, trump, turn, row, self._score)
+            card = player.give_card(cards_on_table, trump, turn, row,
+                                    self._score)
             cards_on_table[card] = player
 
         winner = self.define_winner(cards_on_table, trump)
+        CLI.end_of_turn(cards_on_table, trump, turn, row, self._score, [],
+                        winner)
         winner._hands += 1
         self._last_hand = winner
 
