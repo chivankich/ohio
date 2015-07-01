@@ -27,15 +27,20 @@ All you need is a Python 3.4.X and Git, running on your system.
 - Download Git for the appropriate platform from the [git-scm.com/downloads](https://git-scm.com/downloads)
 
 ##Setup
-The first thing you need to do is to clone the git project in any folder to your system. Open the command line (in Windows) or the terminal (in Linux) and execute the following command: `git clone https://github.com/chivankich/ohio.git`.
+The first thing you need to do is to clone the git project in any folder to your system. Open the command line (in Windows) or the terminal (in Linux) and execute the following command:
+
+`git clone https://github.com/chivankich/ohio.git`
+
 This will clone the repo with all the necessary stuff.
 
-Enter in the `ohio` directory. To start the game, just execute `python play.py` in the console. That will start the CLI mode of the game.
+Enter in the _ohio_ directory. To start the game, just execute `python play.py` in the console. That will start the CLI mode of the game.
 
 (TODO: GUI is expected in the future)
 
 ##Tests
-You can run the unittests by executing the following command in the project directory: `python tests.py`
+You can run the unittests by executing the following command in the project directory:
+
+`python tests.py`
 
 ##License
 The license, provided in the project is GNU GPL.
