@@ -145,19 +145,6 @@ class TestGameRules(unittest.TestCase):
         winner = self.game.define_winner(cards_on_table, trump)
         self.assertEqual(winner, self.player1)
 
-    def test_single_deal(self):
-        dealer = self.player3
-        turn = 1
-        self.player4._cards.append(Card('Spades', 'A', 15))
-        self.player1._cards.append(Card('Spades', '6', 6))
-        self.player2._cards.append(Card('Diamonds', 'K', 14))
-        self.player3._cards.append(Card('Clubs', '2', 2))
-        trump = 'Spades'
-        row = self.game.create_row(dealer)
-        self.game.make_predictions(dealer, turn, trump)
-        self.game.single_deal(row, trump, turn)
-        self.assertEqual(self.game._last_hand, self.player4)
-
     def test_calculate_points_successful_prediction(self):
         self.game._predictions[self.player3] = 3
         self.player3._hands = 3
